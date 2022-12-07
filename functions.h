@@ -34,6 +34,10 @@ void execute_command(char* token[], long long int arg_count);
 void cd(char* token[], long long int arg_count);
 void pwd();
 void echo(char* token[], long long int arg_count);
-
+void ls(char *token[], long long int arg_count);
+void execute_ls(char path[], int num_of_paths, int l_flag, int a_flag);
+void print_longform(char path[], char filename[]);
+int is_dir(char *path);
+int is_file(char *path);
 
 #endif

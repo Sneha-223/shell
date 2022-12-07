@@ -54,9 +54,14 @@ void execute_command(char *token[], long long int arg_count) //check the command
 
     else if (strcmp(token[0], "echo") == 0)
     {
-        //printf("inside echo\n");
         echo(token, arg_count);
     }
+
+    else if (strcmp(token[0], "ls") == 0)
+    {
+        ls(token, arg_count);
+    }
+    
     else if (strcmp(token[0], "exit") == 0)
     {
         exit_status = 1;
