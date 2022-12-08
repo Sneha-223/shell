@@ -95,6 +95,10 @@ void execute_command(char *token[], long long int arg_count) //check the command
 
         backgroundProcess(bgcommand);
     }
+    else if (strcmp(token[0], "jobs") == 0)
+    {
+        jobs(token, arg_count);
+    }
     else if (strcmp(token[0], "exit") == 0)
     {
         exit_status = 1;
@@ -113,6 +117,51 @@ void execute_command(char *token[], long long int arg_count) //check the command
     // }
 }
 
+void ctrl_z_handler(int signal_number)
+{
+    pid_t curr_pid = getpid();
+    if (curr_pid != shellpid)
+    {
+        return;
+    }
+    if (current_fg.pid != -1)   //if fg exists
+    {
+        kill(current_fg.pid, SIGTTIN);          //signal is sent to say the process won't get input now because its not in the fg
+        kill(current_fg.pid, SIGTSTP);          //process is stopped
+
+        bg_processes[numOfbgProcesses].pid = current_fg.pid;
+        strcpy(bg_processes[numOfbgProcesses].processName, current_fg.processName);
+        bg_processes[numOfbgProcesses].job_num = numOfbgProcesses + 1;
+
+        numOfbgProcesses++;
+        //printf("numogbg: %d\n", numOfbgProcesses);
+        //printf("job num: %d pid: %d %s\n", bg_processes[numOfbgProcesses - 1].job_num, bg_processes[numOfbgProcesses - 1].pid, bg_processes[numOfbgProcesses - 1].processName);
+
+        return;
+    }
+
+    //Reseting handler to catch SIGTSTP next time
+    signal(SIGTSTP, ctrl_z_handler);
+
+    return;
+}
+
+void ctrl_c_handler(int signal_number)
+{
+    pid_t curr_pid = getpid();
+    if (curr_pid != shellpid)
+        return;
+    if (current_fg.pid != -1)
+    {
+        kill(current_fg.pid, SIGINT);
+    }
+
+    //Reseting handler to catch SIGINT next time
+    signal(SIGINT, ctrl_c_handler);
+
+    return;
+}
+
 //setting global vars
 char shell_root_dir[] = "";
 int exit_status = 0;
@@ -124,6 +173,10 @@ int main()
     getcwd(shell_root_dir, sizeof(shell_root_dir));
     current_fg.pid = -1;
     shellpid = getpid();
+
+    signal(SIGTSTP, ctrl_z_handler);
+    signal(SIGINT, ctrl_c_handler);
+    signal(SIGCHLD, handler);       //to handle bg processes that have gone from stopped -> running (i.e bg <job_num>)
 
     char* line;
     do

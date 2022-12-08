@@ -54,5 +54,8 @@ int is_file(char *path);
 void pinfo(char token[], long long int arg_count);
 void backgroundProcess(char *token[]);
 void foregroundProcess(char* token[]);
+void handler(int sig);
+
+
 
 #endif
