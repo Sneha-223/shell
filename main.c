@@ -1,5 +1,57 @@
 #include "functions.h"
 
+int pipecheck(char *token[], long long int arg_count)
+{
+    int pipe_flag = 0;
+
+    for (long long int i = 0; token[i] != NULL; i++)
+    {
+        if (strcmp(token[i], "|") == 0)
+        {
+            pipe_flag = 1;
+            break;
+        }
+    }
+
+    return pipe_flag;
+}
+
+int redirection_check(char *token[], long long int arg_count, long long int *redirection_position)
+{
+    //long long int redirection_position = 0;
+    int redirection_flag = 0;
+
+    int i = 0;
+
+    while (token[i] != NULL && i < arg_count)
+    {
+        //checking for redirection
+        if (strcmp(token[i], "<") == 0)
+        {
+            redirection_flag = 1;
+            *redirection_position = i;
+            break;
+        }
+        else if (strcmp(token[i], ">") == 0)
+        {
+            redirection_flag = 2;
+            *redirection_position = i;
+            break;
+        }
+        else if (strcmp(token[i], ">>") == 0)
+        {
+            redirection_flag = 3;
+            *redirection_position = i;
+            break;
+        }
+
+        i++;
+    }
+
+    return redirection_flag;
+}
+
+
 void input(char *input) //takes user input
 {
     size_t length = strlen(input);
@@ -41,6 +93,27 @@ void input(char *input) //takes user input
 
 void execute_command(char *token[], long long int arg_count) //check the command and call the respective function
 {
+
+    //checking for redirection_flag
+    long long int redirection_position;
+    int redirection_flag = redirection_check(token, arg_count, &redirection_position);
+
+    int pipe_flag = pipecheck(token, arg_count);
+
+    if (redirection_flag > 0 && pipe_flag == 0)
+    {
+        //printf("redir flag: %d, position: %lld\n", redirection_flag, redirection_position);
+        redirection(token, arg_count, redirection_flag, redirection_position);
+        return;
+    }
+
+    if (pipe_flag > 0)
+    {
+        piping(token, arg_count);
+
+        return;
+    }
+
 
     if (strcmp(token[0], "cd") == 0)
     {

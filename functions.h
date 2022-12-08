@@ -55,6 +55,11 @@ void pinfo(char token[], long long int arg_count);
 void backgroundProcess(char *token[]);
 void foregroundProcess(char* token[]);
 void handler(int sig);
+void jobs(char *token[], long long int arg_count);
+int redirection_check(char *token[], long long int arg_count, long long int *redirection_position);
+void redirection(char* token[], long long int arg_count, int redirection_flag, long long int redirection_position);
+int pipecheck(char *token[], long long int arg_count);
+void piping(char *token[], long long int arg_count);
 
 
 
