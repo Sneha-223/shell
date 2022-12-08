@@ -61,10 +61,47 @@ void execute_command(char *token[], long long int arg_count) //check the command
     {
         ls(token, arg_count);
     }
-    
+    else if (strcmp(token[0], "pinfo") == 0)
+    {
+        pinfo(token[1], arg_count);
+    }
+    else if (strcmp(token[0], "repeat") == 0)
+    {
+
+        int numOfRepeats = atoi(token[1]);
+
+        char *repeatcommand[MAX_TOKEN_NUM];
+
+        long long int l = 0;
+        for (long long int j = 2; j < arg_count; j++, l++)
+        {
+            repeatcommand[l] = token[j];
+        }
+
+        for (int k = 0; k < numOfRepeats; k++)
+        {
+            execute_command(repeatcommand, l); 
+        }
+    }
+    else if (strcmp(token[arg_count - 1], "&") == 0)
+    {
+        char *bgcommand[MAX_TOKEN_NUM] = {NULL};
+
+        for (long long int j = 0; j < arg_count - 1; j++)
+        {
+            bgcommand[j] = token[j];
+            //printf("%s\n", bgcommand[j]);
+        }
+
+        backgroundProcess(bgcommand);
+    }
     else if (strcmp(token[0], "exit") == 0)
     {
         exit_status = 1;
+    }
+    else
+    {
+        foregroundProcess(token);
     }
     
     // //testing
@@ -85,7 +122,7 @@ int main()
 {
     //initializing the shell's root dir
     getcwd(shell_root_dir, sizeof(shell_root_dir));
-
+    current_fg.pid = -1;
     shellpid = getpid();
 
     char* line;
