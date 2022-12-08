@@ -60,7 +60,10 @@ int redirection_check(char *token[], long long int arg_count, long long int *red
 void redirection(char* token[], long long int arg_count, int redirection_flag, long long int redirection_position);
 int pipecheck(char *token[], long long int arg_count);
 void piping(char *token[], long long int arg_count);
-
+void sig(char *token[], long long int arg_count);
+void delete_process (int pid);
+void fg(char *token[], long long int arg_count);
+void bg(char *token[], long long int arg_count);
 
 
 #endif

@@ -172,6 +172,18 @@ void execute_command(char *token[], long long int arg_count) //check the command
     {
         jobs(token, arg_count);
     }
+    else if (strcmp(token[0], "sig") == 0)
+    {
+        sig(token, arg_count);
+    }
+    else if (strcmp(token[0], "fg") == 0)
+    {
+        fg(token, arg_count);
+    }
+    else if (strcmp(token[0], "bg") == 0)
+    {
+        bg(token, arg_count);
+    }
     else if (strcmp(token[0], "exit") == 0)
     {
         exit_status = 1;
